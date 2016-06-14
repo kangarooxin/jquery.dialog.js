@@ -31,16 +31,36 @@
             return false;
         });
 
-        if(typeof options.callback == 'function'){
-            options.callback($dialog);
+        if(typeof options.onShow == 'function'){
+            options.onShow($dialog);
+        }
+        
+        if(options.autoClose) {
+            setTimeout(function(){
+                autoClose($dialog, options);
+            }, 1000);
+        }
+    }
+    
+    function autoClose($dialog, options) {
+        options.autoClose--;
+        if(options.autoClose == 0) {
+            $dialog.trigger('close');
+        } else {
+            if(typeof options.onCountDown == 'function') {
+                options.onCountDown(options.autoClose, $dialog);
+            }
+            setTimeout(function(){
+                autoClose($dialog, options);
+            }, 1000);
         }
     }
     
     $.fn.jqueryDialog = function(options){
         options = $.extend({}, $.fn.jqueryDialog.defaults, options);
         var $dialog = $('<div class="jq-dialog-box" style="width:100%; height:100%; position:fixed; top:0;left:0; z-index:' + options.zIndex + ';"/>');
-        var $mask = $('<div class="jq-dialog-mask" style="filter:alpha(opacity=80); -moz-opacity:0.8; opacity:0.8;width:100%; height:100%; position:absolute; top:0;left:0; background:#000;"/>');
-        var $container = $('<div class="jq-dialog-container" style="position:absolute; top:50%;left:50%;"/>');
+        var $mask = $('<div class="jq-dialog-mask" style="filter:alpha(opacity='+ options.opacity * 100 + '); -moz-opacity:'+ options.opacity + '; opacity:'+ options.opacity + ';width:100%; height:100%; position:absolute; top:0;left:0; background:'+ options.background + ';"/>');
+        var $container = $('<div class="jq-dialog-container" style="position:absolute; top:'+ options.top + '; left:50%;"/>');
         var $temp = $('<div/>');
         if(options.url) {
             $temp.load(options.url, function(content){
@@ -62,7 +82,14 @@
         data: {},
         zIndex: 10000,
         url: false,
-        callback: function($dialog) {
+        autoClose: false,
+        opacity: 0.8,
+        background: '#000',
+        top: '50%',
+        onCountDown: function(seconds, $dialog) {
+            
+        },
+        onShow: function($dialog) {
 
         },
         onClose: function($dialog) {

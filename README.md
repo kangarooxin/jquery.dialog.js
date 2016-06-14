@@ -28,7 +28,14 @@ $.fn.jqueryDialog.defaults = {
     data: {},
     zIndex: 10000,
     url: false,
-    callback: function($dialog) {
+    autoClose: false,
+    opacity: 0.8,
+    background: '#000',
+    top: '50%',
+    onCountDown: function(seconds, $dialog) {
+
+    },
+    onShow: function($dialog) {
 
     },
     onClose: function($dialog) {
